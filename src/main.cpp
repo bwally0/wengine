@@ -2,10 +2,10 @@
 
 int main()
 {
-    Application app({ 
-        .windowWidth = 800, 
-        .windowHeight = 600, 
-        .windowTitle = "wengine" 
+    Application app({
+        .width  = 800,
+        .height = 600,
+        .title  = "wengine"
     });
 
     app.run();

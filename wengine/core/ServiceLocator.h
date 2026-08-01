@@ -12,7 +12,7 @@ public:
     {
         auto key = std::type_index(typeid(TService));
         if (m_services.count(key))
-            spdlog::warn("overwriting existing service: {}", typeid(TService).name());
+            spdlog::warn("Overwriting existing service: {}", typeid(TService).name());
 
         m_services[key] = service;
     }
@@ -23,7 +23,7 @@ public:
         auto it = m_services.find(std::type_index(typeid(TService)));
         if (it == m_services.end())
         {
-            spdlog::error("service {} is not provided", typeid(TService).name());
+            spdlog::error("Service '{}' is not provided", typeid(TService).name());
             return nullptr;
         }
         return static_cast<TService*>(it->second);

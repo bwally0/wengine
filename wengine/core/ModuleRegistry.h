@@ -19,13 +19,13 @@ public:
 private:
     struct ModuleEntry
     {
-        std::string name;
+        std::string              name;
         std::unique_ptr<IModule> module;
     };
 
-    void sortModules(); // populates m_sorted_modules, topological sort
+    void sortModules();
 
     std::vector<ModuleEntry> m_modules;
-    std::vector<IModule*> m_sorted_modules;
-    bool m_sorted_valid = false;
+    std::vector<IModule*>    m_sortedModules;
+    bool                     m_sortedValid = false;
 };

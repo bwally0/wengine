@@ -11,10 +11,10 @@ struct GLFWwindow;
 
 struct AppConfig
 {
-    int windowWidth  = 800;
-    int windowHeight = 600;
-    std::string windowTitle  = "wengine";
-    double fixedTimestep = 1.0 / 60.0; // 60Hz
+    int         width     = 800;
+    int         height    = 600;
+    std::string title     = "wengine";
+    double      timestep  = 1.0 / 60.0; // 60Hz
 };
 
 class Application
@@ -27,8 +27,8 @@ public:
 
     void run();
 
-    ServiceLocator& getServiceLocator() { return m_locator; }
-    EventBus& getEventBus() { return m_eventBus; }
+    ServiceLocator& getServiceLocator() { return m_serviceLocator; }
+    EventBus&       getEventBus()       { return m_eventBus; }
 
 private:
     bool initGLFW();
@@ -36,10 +36,10 @@ private:
     void initCallbacks();
     void shutdown();
 
-    AppConfig m_config;
-    GLFWwindow* m_window  = nullptr;
+    AppConfig      m_config;
+    GLFWwindow*    m_window = nullptr;
 
-    EventBus m_eventBus;
-    ServiceLocator m_locator;
-    ModuleRegistry m_registry;
+    EventBus       m_eventBus;
+    ServiceLocator m_serviceLocator;
+    ModuleRegistry m_moduleRegistry;
 };

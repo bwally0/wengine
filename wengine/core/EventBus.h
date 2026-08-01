@@ -5,7 +5,6 @@
 #include <unordered_map>
 #include <functional>
 
-
 class EventBus
 {
 public:
@@ -14,8 +13,7 @@ public:
     {
         auto key = std::type_index(typeid(TEvent));
 
-        // add callback function to map
-        m_subscriber_callbacks[key].push_back([cb = std::move(callback)](const void* event) {
+        m_subscriberCallbacks[key].push_back([cb = std::move(callback)](const void* event) {
             cb(*static_cast<const TEvent*>(event));
         });
     }
@@ -24,20 +22,17 @@ public:
     void publish(const TEvent& event)
     {
         auto key = std::type_index(typeid(TEvent));
-        auto it = m_subscriber_callbacks.find(key);
+        auto it  = m_subscriberCallbacks.find(key);
 
-        if (it == m_subscriber_callbacks.end()) return; // no subscribers for this event type
+        if (it == m_subscriberCallbacks.end()) return;
 
         for (const auto& callback : it->second)
-        {
             callback(&event);
-        }
     }
 
 private:
-    // store subscriber callback functions for each event type
     std::unordered_map<
-        std::type_index, 
+        std::type_index,
         std::vector<std::function<void(const void*)>>
-    > m_subscriber_callbacks;
+    > m_subscriberCallbacks;
 };

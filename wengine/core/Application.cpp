@@ -16,7 +16,7 @@ Application::~Application()
 
 void Application::registerModule(std::string name, std::unique_ptr<IModule> module)
 {
-    m_registry.registerModule(std::move(name), std::move(module));
+    m_moduleRegistry.registerModule(std::move(name), std::move(module));
 }
 
 void Application::run()
@@ -32,40 +32,41 @@ void Application::run()
     initCallbacks();
 
     // register engine services before any module inits
-    m_locator.provide<EventBus>(&m_eventBus);
+    m_serviceLocator.provide<EventBus>(&m_eventBus);
 
     spdlog::info("OpenGL version: {}", (const char*)glGetString(GL_VERSION));
 
-    m_registry.init();
+    m_moduleRegistry.init();
 
     // fixed timestep loop
-    double lastTime = glfwGetTime();
-    double accumulatedTime = 0.0;
+    double lastTime    = glfwGetTime();
+    double accumulator = 0.0;
 
     while (!glfwWindowShouldClose(m_window))
     {
         double currentTime = glfwGetTime();
-        double deltaTime = currentTime - lastTime;
-        lastTime = currentTime;
+        double frameTime   = currentTime - lastTime;
+        lastTime           = currentTime;
 
-        if (deltaTime > 0.25) deltaTime = 0.25;
+        // cap to prevent stall on slow frames
+        if (frameTime > 0.25) frameTime = 0.25;
 
-        accumulatedTime += deltaTime;
+        accumulator += frameTime;
 
-        while (accumulatedTime >= m_config.fixedTimestep)
+        while (accumulator >= m_config.timestep)
         {
-            m_registry.update(m_config.fixedTimestep);
-            accumulatedTime -= m_config.fixedTimestep;
+            m_moduleRegistry.update(m_config.timestep);
+            accumulator -= m_config.timestep;
         }
 
         glClear(GL_COLOR_BUFFER_BIT);
-        m_registry.render();
+        m_moduleRegistry.render();
 
         glfwSwapBuffers(m_window);
         glfwPollEvents();
     }
 
-    m_registry.shutdown();
+    m_moduleRegistry.shutdown();
 }
 
 bool Application::initGLFW()
@@ -76,7 +77,7 @@ bool Application::initGLFW()
 
     if (!glfwInit())
     {
-        spdlog::error("failed to initialize GLFW");
+        spdlog::error("Failed to initialize GLFW");
         return false;
     }
 
@@ -84,11 +85,11 @@ bool Application::initGLFW()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    m_window = glfwCreateWindow(m_config.windowWidth, m_config.windowHeight, m_config.windowTitle.c_str(), nullptr, nullptr);
+    m_window = glfwCreateWindow(m_config.width, m_config.height, m_config.title.c_str(), nullptr, nullptr);
 
     if (!m_window)
     {
-        spdlog::error("failed to create GLFW window");
+        spdlog::error("Failed to create GLFW window");
         glfwTerminate();
         return false;
     }
@@ -103,7 +104,7 @@ bool Application::initGLAD()
 {
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
-        spdlog::error("failed to initialize GLAD");
+        spdlog::error("Failed to initialize GLAD");
         return false;
     }
     return true;
