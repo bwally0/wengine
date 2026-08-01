@@ -1,4 +1,4 @@
-#include "ModuleRegistry.h"
+#include "wengine/core/ModuleRegistry.h"
 #include <spdlog/spdlog.h>
 #include <functional>
 #include <stdexcept>
@@ -61,8 +61,8 @@ void ModuleRegistry::sortModules()
         if (visited[name] == State::VISITED) return;
         if (visited[name] == State::IN_PROGRESS)
         {
-            spdlog::error("Circular dependency found for module: {}", name);
-            throw std::runtime_error("Circular dependency: " + name);
+            spdlog::error("ModuleRegistry: circular dependency found for '{}'", name);
+            throw std::runtime_error("ModuleRegistry: circular dependency found");
         }
 
         visited[name] = State::IN_PROGRESS;
@@ -75,8 +75,8 @@ void ModuleRegistry::sortModules()
             }
             else
             {
-                spdlog::error("Module '{}' requires missing dependency '{}'", name, dependency);
-                throw std::runtime_error("Dependency not found: " + dependency);
+                spdlog::error("ModuleRegistry: module '{}' requires missing dependency '{}'", name, dependency);
+                throw std::runtime_error("ModuleRegistry: dependency not found");
             }
         }
 

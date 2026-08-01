@@ -1,8 +1,8 @@
 #pragma once
 
-#include "ModuleRegistry.h"
-#include "ServiceLocator.h"
-#include "EventBus.h"
+#include "wengine/core/ModuleRegistry.h"
+#include "wengine/core/ServiceLocator.h"
+#include "wengine/core/EventBus.h"
 
 #include <string>
 
