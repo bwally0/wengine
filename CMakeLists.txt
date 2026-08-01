@@ -11,7 +11,13 @@ find_package(imgui             CONFIG REQUIRED)
 find_package(nlohmann_json     CONFIG REQUIRED)
 find_package(spdlog            CONFIG REQUIRED)
 
-add_executable(wengine src/main.cpp)
+add_executable(wengine
+    src/main.cpp
+    wengine/core/Application.cpp
+    wengine/core/ModuleRegistry.cpp
+)
+
+target_include_directories(wengine PRIVATE ${CMAKE_SOURCE_DIR})
 
 target_link_libraries(wengine PRIVATE
     glfw

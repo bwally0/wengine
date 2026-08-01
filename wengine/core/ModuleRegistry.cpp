@@ -61,7 +61,7 @@ void ModuleRegistry::sortModules()
         VISITED
     };
 
-    std::unordered_map<std::string, State> visited;       // module name -> state
+    std::unordered_map<std::string, State> visited;       // module name -> visit state
     std::unordered_map<std::string, IModule*> module_map; // module name -> module object
 
     for (auto& entry : m_modules)
