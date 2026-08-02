@@ -8,7 +8,7 @@ cmake --build build/debug
 ```
 
 ## Manual
-wengine is a modular game engine built around the ECS paradigm. Functionality is organized into distinct modules, services, entities, components, and systems. 
+wengine is a modular game engine built around the ECS pattern. Functionality is organized into distinct modules, services, entities, components, and systems. 
 
 `Modules` are self-contained subsystems with well-defined lifecycles (`init`, `update`, `shutdown`). Each module is responsible for one domain of functionality for the engine and is driven by the core loop every frame. (e.g. `SceneModule`, `InputModule`)
 
@@ -38,7 +38,7 @@ wengine is a modular game engine built around the ECS paradigm. Functionality is
 
 ### Commit Messages
 
-Follow [Conventional Commits](https://www.conventionalcommits.org/): `<type>(<scope>): <description>`
+[Conventional Commits](https://www.conventionalcommits.org/): `<type>(<scope>): <description>`
 
 | Tag | Use |
 |---|---|

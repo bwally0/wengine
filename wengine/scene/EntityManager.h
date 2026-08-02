@@ -16,6 +16,6 @@ public:
 
 private:
     EntityID                     m_nextID = 1; // 0 is NULL_ENTITY
-    std::vector<bool>            m_freeList;
+    std::vector<EntityID>        m_freeList;
     std::unordered_set<EntityID> m_aliveEntities;
 };
