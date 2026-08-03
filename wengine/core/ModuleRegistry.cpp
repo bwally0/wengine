@@ -1,4 +1,5 @@
 #include "wengine/core/ModuleRegistry.h"
+
 #include <spdlog/spdlog.h>
 #include <functional>
 #include <stdexcept>

@@ -16,7 +16,7 @@ wengine is a modular game engine built around the ECS pattern. Functionality is 
 
 `Entities` are unique identifiers that represent objects in the world. They have no data or behavior of their own and are used to group and identify components.
 
-`Components` are data containers that attach to entities. Each component holds one piece of data related to the entitiy's state. (e.g. `TransformComponent`, `MeshComponent`)
+`Components` are data containers that attach to entities. Each component holds one piece of data related to the entity's state. (e.g. `TransformComponent`, `MeshComponent`)
 
 `Systems` are objects that operate on entities and components within the engine. A system reads and writes component data to produce the next frame's state. Systems have no lifecycles and own no resources. (e.g. `RenderSystem`, `PhysicsSystem`)
 

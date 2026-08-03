@@ -1,6 +1,7 @@
 #pragma once
 
 #include "wengine/scene/EntityManager.h"
+
 #include <spdlog/spdlog.h>
 #include <typeindex>
 #include <unordered_map>
@@ -65,7 +66,6 @@ struct ComponentPool : public IComponentPool
         return m_sparse.count(id) > 0;
     }
 
-    // direct access to dense array for fast system iteration
     std::vector<TComponent>& components()            { return m_denseComponents; }
     std::vector<EntityID>&   entities()              { return m_denseEntities; }
 

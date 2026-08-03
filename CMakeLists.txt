@@ -16,6 +16,7 @@ add_executable(wengine
     wengine/core/Application.cpp
     wengine/core/ModuleRegistry.cpp
     wengine/scene/EntityManager.cpp
+    wengine/scene/SystemRegistry.cpp
 )
 
 target_include_directories(wengine PRIVATE ${CMAKE_SOURCE_DIR})
