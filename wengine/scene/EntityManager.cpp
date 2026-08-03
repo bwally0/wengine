@@ -33,7 +33,7 @@ void EntityManager::destroy(EntityID id)
     m_freeList.push_back(id);
 }
 
-bool EntityManager::isAlive(EntityID id)
+bool EntityManager::isAlive(EntityID id) const
 {
     return m_aliveEntities.count(id) > 0;
 }

@@ -12,7 +12,7 @@ class EntityManager
 public:
     EntityID create();
     void destroy(EntityID id);
-    bool isAlive(EntityID id);
+    bool isAlive(EntityID id) const;
 
 private:
     EntityID                     m_nextID = 1; // 0 is NULL_ENTITY
