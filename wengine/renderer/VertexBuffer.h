@@ -9,10 +9,10 @@ public:
     VertexBuffer(const void* data, size_t size);
     ~VertexBuffer();
 
-    VertexBuffer(const VertexBuffer&)            = delete;
+    VertexBuffer(const VertexBuffer&)            = delete; // non-copyable
     VertexBuffer& operator=(const VertexBuffer&) = delete;
 
-    VertexBuffer(VertexBuffer&& other) noexcept;
+    VertexBuffer(VertexBuffer&& other) noexcept;           // movable
     VertexBuffer& operator=(VertexBuffer&& other) noexcept;
 
     void bind()   const;

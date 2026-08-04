@@ -15,6 +15,7 @@ IndexBuffer::~IndexBuffer()
     if (m_id) glDeleteBuffers(1, &m_id);
 }
 
+// move object
 IndexBuffer::IndexBuffer(IndexBuffer&& other) noexcept
     : m_id(other.m_id), m_count(other.m_count)
 {
@@ -22,6 +23,7 @@ IndexBuffer::IndexBuffer(IndexBuffer&& other) noexcept
     other.m_count = 0;
 }
 
+// move object
 IndexBuffer& IndexBuffer::operator=(IndexBuffer&& other) noexcept
 {
     if (this != &other)

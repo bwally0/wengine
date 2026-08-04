@@ -14,12 +14,14 @@ VertexBuffer::~VertexBuffer()
     if (m_id) glDeleteBuffers(1, &m_id);
 }
 
+// move object
 VertexBuffer::VertexBuffer(VertexBuffer&& other) noexcept
     : m_id(other.m_id)
 {
     other.m_id = 0;
 }
 
+// move object
 VertexBuffer& VertexBuffer::operator=(VertexBuffer&& other) noexcept
 {
     if (this != &other)

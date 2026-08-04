@@ -42,6 +42,8 @@ void ModuleRegistry::shutdown()
         (*it)->shutdown();
 }
 
+
+// implemented as topological sort to order init and shutdown of modules
 void ModuleRegistry::sortModules()
 {
     m_sortedModules.clear();

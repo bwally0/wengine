@@ -54,12 +54,14 @@ Shader::~Shader()
     if (m_id) glDeleteProgram(m_id);
 }
 
+// move object
 Shader::Shader(Shader&& other) noexcept
     : m_id(other.m_id)
 {
     other.m_id = 0;
 }
 
+// move object
 Shader& Shader::operator=(Shader&& other) noexcept
 {
     if (this != &other)

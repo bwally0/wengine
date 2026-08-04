@@ -14,7 +14,7 @@ struct IComponentPool
     virtual ~IComponentPool() = default;
 };
 
-// typed sparse set pool for one component type
+// implemented as sparse set per component type
 template<typename TComponent>
 struct ComponentPool : public IComponentPool
 {

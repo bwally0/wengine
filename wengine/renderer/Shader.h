@@ -9,11 +9,11 @@ public:
     Shader(const std::string& vertexPath, const std::string& fragmentPath);
     ~Shader();
 
-    Shader(const Shader&)            = delete;
+    Shader(const Shader&)            = delete;  // non-copyable
     Shader& operator=(const Shader&) = delete;
 
-    Shader(Shader&& other) noexcept;
-    Shader& operator=(Shader&& other) noexcept;
+    Shader(Shader&& other) noexcept;            // movable
+    Shader& operator=(Shader&& other) noexcept; 
 
     void bind() const;
     void unbind() const;

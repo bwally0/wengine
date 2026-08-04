@@ -12,12 +12,14 @@ VertexArray::~VertexArray()
     if (m_id) glDeleteVertexArrays(1, &m_id);
 }
 
+// move object
 VertexArray::VertexArray(VertexArray&& other) noexcept
     : m_id(other.m_id)
 {
     other.m_id = 0;
 }
 
+// move object
 VertexArray& VertexArray::operator=(VertexArray&& other) noexcept
 {
     if (this != &other)

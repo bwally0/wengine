@@ -20,10 +20,10 @@ public:
     VertexArray();
     ~VertexArray();
 
-    VertexArray(const VertexArray&)            = delete;
+    VertexArray(const VertexArray&)            = delete; // non-copyable
     VertexArray& operator=(const VertexArray&) = delete;
 
-    VertexArray(VertexArray&& other) noexcept;
+    VertexArray(VertexArray&& other) noexcept;           // movable
     VertexArray& operator=(VertexArray&& other) noexcept;
 
     void bind()   const;

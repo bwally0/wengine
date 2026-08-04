@@ -26,7 +26,7 @@ public:
 
         if (it == m_subscriberCallbacks.end()) return;
 
-        for (const auto& callback : it->second)
+        for (const auto& callback : it->second) // run each callback function
             callback(&event);
     }
 
