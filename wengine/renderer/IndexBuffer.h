@@ -8,10 +8,10 @@ public:
     IndexBuffer(const uint32_t* indices, uint32_t count);
     ~IndexBuffer();
 
-    IndexBuffer(const IndexBuffer&)            = delete;
+    IndexBuffer(const IndexBuffer&)            = delete;  // non-copyable
     IndexBuffer& operator=(const IndexBuffer&) = delete;
 
-    IndexBuffer(IndexBuffer&& other) noexcept;
+    IndexBuffer(IndexBuffer&& other) noexcept;            // movable
     IndexBuffer& operator=(IndexBuffer&& other) noexcept;
 
     void bind()   const;

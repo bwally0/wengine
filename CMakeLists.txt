@@ -11,13 +11,12 @@ find_package(imgui             CONFIG REQUIRED)
 find_package(nlohmann_json     CONFIG REQUIRED)
 find_package(spdlog            CONFIG REQUIRED)
 
-add_executable(wengine
-    src/main.cpp
-    wengine/core/Application.cpp
-    wengine/core/ModuleRegistry.cpp
-    wengine/scene/EntityManager.cpp
-    wengine/scene/SystemRegistry.cpp
+file(GLOB_RECURSE WENGINE_SOURCES
+    "src/*.cpp"
+    "wengine/**/*.cpp"
 )
+
+add_executable(wengine ${WENGINE_SOURCES})
 
 target_include_directories(wengine PRIVATE ${CMAKE_SOURCE_DIR})
 
