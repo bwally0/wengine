@@ -1,6 +1,6 @@
 #pragma once
 
-#include "wengine/scene/ISystem.h"
+#include "wengine/core/ISystem.h"
 #include <memory>
 #include <string>
 #include <vector>
