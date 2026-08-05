@@ -32,11 +32,11 @@ struct ComponentPool : public IComponentPool
         m_denseEntities.push_back(id);
     }
 
-    TComponent* get(EntityID id)
+    TComponent* get(EntityID id) const
     {
         auto it = m_sparse.find(id);
         if (it == m_sparse.end()) return nullptr;
-        return &m_denseComponents[it->second];
+        return const_cast<TComponent*>(&m_denseComponents[it->second]);
     }
 
     void remove(EntityID id) override
@@ -86,7 +86,7 @@ public:
     }
 
     template<typename TComponent>
-    TComponent* get(EntityID id)
+    TComponent* get(EntityID id) const
     {
         auto it = m_pools.find(std::type_index(typeid(TComponent)));
         if (it == m_pools.end()) return nullptr;
@@ -102,7 +102,7 @@ public:
     }
 
     template<typename TComponent>
-    bool has(EntityID id)
+    bool has(EntityID id) const
     {
         auto it = m_pools.find(std::type_index(typeid(TComponent)));
         if (it == m_pools.end()) return false;
