@@ -1,8 +1,8 @@
 #pragma once
 
-#include "wengine/renderer/VertexArray.h"
-#include "wengine/renderer/IndexBuffer.h"
-#include "wengine/renderer/Shader.h"
+#include "wengine/render/VertexArray.h"
+#include "wengine/render/IndexBuffer.h"
+#include "wengine/render/Shader.h"
 #include <memory>
 #include <cstdint>
 

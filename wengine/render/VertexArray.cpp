@@ -1,4 +1,4 @@
-#include "wengine/renderer/VertexArray.h"
+#include "wengine/render/VertexArray.h"
 
 #include <glad/glad.h>
 

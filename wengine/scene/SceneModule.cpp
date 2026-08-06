@@ -12,6 +12,11 @@ void SceneModule::update(double deltaTime)
     m_systemRegistry.update(deltaTime);
 }
 
+void SceneModule::render()
+{
+    // rendering is driven by RenderModule, not the scene
+}
+
 void SceneModule::shutdown()
 {
     spdlog::info("SceneModule: shutdown");

@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <functional>
 
+// TODO: switch to EventQueue if this becomes a problem
 class EventBus
 {
 public:

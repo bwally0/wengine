@@ -1,4 +1,4 @@
-#include "wengine/renderer/Texture.h"
+#include "wengine/render/Texture.h"
 
 #include <glad/glad.h>
 #include <spdlog/spdlog.h>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "wengine/renderer/VertexBuffer.h"
+#include "wengine/render/VertexBuffer.h"
 #include <cstdint>
 #include <vector>
 

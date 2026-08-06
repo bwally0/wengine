@@ -1,4 +1,4 @@
-#include "wengine/renderer/Shader.h"
+#include "wengine/render/Shader.h"
 
 #include <glad/glad.h>
 #include <spdlog/spdlog.h>

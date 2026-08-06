@@ -1,4 +1,5 @@
 #include "wengine/core/Application.h"
+#include "wengine/core/events/WindowResizeEvent.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -112,8 +113,12 @@ bool Application::initGLAD()
 
 void Application::initCallbacks()
 {
-    glfwSetFramebufferSizeCallback(m_window, [](GLFWwindow*, int w, int h) {
+    glfwSetWindowUserPointer(m_window, this);
+
+    glfwSetFramebufferSizeCallback(m_window, [](GLFWwindow* window, int w, int h) {
         glViewport(0, 0, w, h);
+        auto* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
+        app->m_eventBus.publish(WindowResizeEvent{ w, h });
     });
 
     glfwSetKeyCallback(m_window, [](GLFWwindow* window, int key, int scancode, int action, int mods) {

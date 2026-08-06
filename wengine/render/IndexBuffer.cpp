@@ -1,4 +1,4 @@
-#include "wengine/renderer/IndexBuffer.h"
+#include "wengine/render/IndexBuffer.h"
 
 #include <glad/glad.h>
 

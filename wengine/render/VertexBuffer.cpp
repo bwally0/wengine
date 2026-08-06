@@ -1,4 +1,4 @@
-#include "wengine/renderer/VertexBuffer.h"
+#include "wengine/render/VertexBuffer.h"
 
 #include <glad/glad.h>
 
