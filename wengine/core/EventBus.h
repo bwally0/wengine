@@ -4,6 +4,7 @@
 #include <vector>
 #include <unordered_map>
 #include <functional>
+#include <spdlog/spdlog.h>
 
 // TODO: switch to EventQueue if this becomes a problem
 class EventBus
@@ -22,6 +23,8 @@ public:
     template<typename TEvent>
     void publish(const TEvent& event)
     {
+        spdlog::info("EventBus: {}", typeid(TEvent).name());
+
         auto key = std::type_index(typeid(TEvent));
         auto it  = m_subscriberCallbacks.find(key);
 

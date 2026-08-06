@@ -4,8 +4,6 @@
 #include "wengine/scene/SceneModule.h"
 #include <glm/glm.hpp>
 
-// ForwardRenderer is owned and driven by RenderModule.
-// It iterates (Transform + Mesh) entities and submits draw calls.
 class ForwardRenderer
 {
 public:

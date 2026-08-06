@@ -7,10 +7,12 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <spdlog/spdlog.h>
 
-RenderModule::RenderModule(SceneModule& scene, EventBus& eventBus)
+RenderModule::RenderModule(SceneModule& scene, EventBus& eventBus, int width, int height)
     : m_scene(scene)
     , m_eventBus(eventBus)
     , m_projection(glm::mat4(1.0f))
+    , m_initialWidth(width)
+    , m_initialHeight(height)
 {
 }
 
@@ -19,7 +21,7 @@ void RenderModule::init()
     glEnable(GL_DEPTH_TEST);
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
-    updateProjection(800, 600);
+    updateProjection(m_initialWidth, m_initialHeight);
 
     m_forwardRenderer = std::make_unique<ForwardRenderer>(m_scene, m_projection, m_eventBus);
 

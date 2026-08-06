@@ -14,7 +14,7 @@ class EventBus;
 class RenderModule : public IModule
 {
 public:
-    RenderModule(SceneModule& scene, EventBus& eventBus);
+    RenderModule(SceneModule& scene, EventBus& eventBus, int width, int height);
 
     void init()                   override;
     void update(double deltaTime) override {}
@@ -35,6 +35,8 @@ private:
     float m_fov       = 45.0f;
     float m_nearPlane = 0.1f;
     float m_farPlane  = 1000.0f;
+    int   m_initialWidth;
+    int   m_initialHeight;
 
     void updateProjection(int width, int height);
 };

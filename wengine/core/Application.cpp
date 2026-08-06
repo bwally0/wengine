@@ -56,12 +56,12 @@ void Application::run()
 
         while (accumulator >= m_config.timestep)
         {
-            m_moduleRegistry.update(m_config.timestep);
+            m_moduleRegistry.update(m_config.timestep); // updates are fixed time
             accumulator -= m_config.timestep;
         }
 
         glClear(GL_COLOR_BUFFER_BIT);
-        m_moduleRegistry.render();
+        m_moduleRegistry.render();                      // renders are variable time
 
         glfwSwapBuffers(m_window);
         glfwPollEvents();

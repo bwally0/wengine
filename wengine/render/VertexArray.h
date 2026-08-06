@@ -1,6 +1,7 @@
 #pragma once
 
 #include "wengine/render/VertexBuffer.h"
+#include "wengine/render/IndexBuffer.h"
 #include <cstdint>
 #include <vector>
 
@@ -30,6 +31,7 @@ public:
     void unbind() const;
 
     void addVertexBuffer(const VertexBuffer& vbo, const std::vector<VertexAttribute>& attributes);
+    void setIndexBuffer(const IndexBuffer& ibo);
 
 private:
     uint32_t m_id = 0;

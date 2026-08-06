@@ -1,4 +1,5 @@
 #include "wengine/render/VertexArray.h"
+#include "wengine/render/IndexBuffer.h"
 
 #include <glad/glad.h>
 
@@ -52,5 +53,12 @@ void VertexArray::addVertexBuffer(const VertexBuffer& vbo, const std::vector<Ver
         );
     }
 
+    glBindVertexArray(0);
+}
+
+void VertexArray::setIndexBuffer(const IndexBuffer& ibo)
+{
+    glBindVertexArray(m_id);
+    ibo.bind();
     glBindVertexArray(0);
 }
