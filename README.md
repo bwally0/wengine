@@ -47,6 +47,7 @@ cmake --build build/debug
 | `refactor` | Code change that isn't a fix or feature |
 | `chore` | Build system, dependencies, tooling |
 | `docs` | Documentation only |
+| `ci` | DevOps |
 | `test` | Adding or fixing tests |
 | `perf` | Performance improvement |
 | `style` | Formatting, whitespace, no logic change |

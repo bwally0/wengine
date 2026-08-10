@@ -1,0 +1,36 @@
+name: Build
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      VCPKG_ROOT: /usr/local/share/vcpkg
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build \
+            libxinerama-dev libxcursor-dev xorg-dev libglu1-mesa-dev
+
+      - name: Cache vcpkg packages
+        uses: actions/cache@v4
+        with:
+          path: build/debug/vcpkg_installed
+          key: vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json') }}
+          restore-keys: vcpkg-${{ runner.os }}-
+
+      - name: Configure
+        run: cmake --preset debug
+
+      - name: Build
+        run: cmake --build build/debug
