@@ -1,4 +1,5 @@
 #include "wengine/core/ModuleRegistry.h"
+#include "wengine/core/ResourceRegistry.h"
 
 #include <spdlog/spdlog.h>
 #include <functional>
@@ -10,12 +11,12 @@ void ModuleRegistry::registerModule(std::string name, std::unique_ptr<IModule> m
     m_sortedValid = false;
 }
 
-void ModuleRegistry::init()
+void ModuleRegistry::init(ResourceRegistry& resources)
 {
     sortModules();
 
     for (auto* module : m_sortedModules)
-        module->init();
+        module->init(resources);
 }
 
 void ModuleRegistry::update(double deltaTime)
@@ -40,6 +41,13 @@ void ModuleRegistry::shutdown()
 
     for (auto it = m_sortedModules.rbegin(); it != m_sortedModules.rend(); ++it)
         (*it)->shutdown();
+}
+
+void ModuleRegistry::clear()
+{
+    m_sortedModules.clear();
+    m_modules.clear();
+    m_sortedValid = false;
 }
 
 

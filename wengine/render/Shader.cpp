@@ -46,7 +46,7 @@ Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath)
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
-    spdlog::info("Shader: compiled '{}'", vertexPath);
+    spdlog::info("Shader: compiled '{}' , '{}'", vertexPath, fragmentPath);
 }
 
 Shader::~Shader()

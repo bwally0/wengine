@@ -6,7 +6,7 @@
 #include <functional>
 #include <spdlog/spdlog.h>
 
-// TODO: switch to EventQueue if this becomes a problem
+// TODO: refactor to EventQueue later
 class EventBus
 {
 public:

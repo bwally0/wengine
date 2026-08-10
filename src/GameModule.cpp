@@ -1,4 +1,5 @@
 #include "GameModule.h"
+#include "wengine/core/ResourceRegistry.h"
 
 #include "wengine/scene/components/Transform.h"
 #include "wengine/scene/components/Mesh.h"
@@ -10,7 +11,7 @@
 #include <glad/glad.h>
 #include <spdlog/spdlog.h>
 
-void GameModule::init()
+void GameModule::init(ResourceRegistry& resources)
 {
     // vertex data: position (xyz) + color (rgb)
     float vertices[] = {

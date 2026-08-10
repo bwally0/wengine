@@ -14,8 +14,8 @@ int main()
     Application app(config);
 
     auto scene    = std::make_unique<SceneModule>();
-    auto renderer = std::make_unique<RenderModule>(*scene, app.getEventBus(), config.width, config.height);
-    auto game     = std::make_unique<GameModule>(*scene);
+    auto renderer = std::make_unique<RenderModule>(*scene);
+    auto game     = std::make_unique<GameModule>(*scene, *renderer);
 
     app.registerModule("SceneModule",  std::move(scene));
     app.registerModule("RenderModule", std::move(renderer));

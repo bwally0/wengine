@@ -1,8 +1,9 @@
 #include "wengine/scene/SceneModule.h"
+#include "wengine/core/ResourceRegistry.h"
 
 #include <spdlog/spdlog.h>
 
-void SceneModule::init()
+void SceneModule::init(ResourceRegistry& resources)
 {
     spdlog::info("SceneModule: initialized");
 }

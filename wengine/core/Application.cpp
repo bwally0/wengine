@@ -8,6 +8,15 @@
 Application::Application(AppConfig config)
     : m_config(std::move(config))
 {
+    if (!initGLFW()) return;
+    if (!initGLAD())
+    {
+        glfwDestroyWindow(m_window);
+        m_window = nullptr;
+        glfwTerminate();
+        return;
+    }
+    initCallbacks();
 }
 
 Application::~Application()
@@ -22,22 +31,15 @@ void Application::registerModule(std::string name, std::unique_ptr<IModule> modu
 
 void Application::run()
 {
-    if (!initGLFW()) return;
-    if (!initGLAD())
-    {
-        glfwDestroyWindow(m_window);
-        glfwTerminate();
-        return;
-    }
+    if (!m_window) return;
 
-    initCallbacks();
-
-    // register engine services before any module inits
-    m_serviceLocator.provide<EventBus>(&m_eventBus);
+    // register engine resources before any module inits
+    m_resourceRegistry.provide<EventBus>(&m_eventBus);
+    m_resourceRegistry.provide<AppConfig>(&m_config);
 
     spdlog::info("OpenGL version: {}", (const char*)glGetString(GL_VERSION));
 
-    m_moduleRegistry.init();
+    m_moduleRegistry.init(m_resourceRegistry);
 
     // fixed timestep loop
     double lastTime    = glfwGetTime();
@@ -45,6 +47,8 @@ void Application::run()
 
     while (!glfwWindowShouldClose(m_window))
     {
+        glfwPollEvents(); // poll OS events
+
         double currentTime = glfwGetTime();
         double frameTime   = currentTime - lastTime;
         lastTime           = currentTime;
@@ -64,7 +68,6 @@ void Application::run()
         m_moduleRegistry.render();                      // renders are variable time
 
         glfwSwapBuffers(m_window);
-        glfwPollEvents();
     }
 
     m_moduleRegistry.shutdown();
@@ -120,15 +123,12 @@ void Application::initCallbacks()
         auto* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
         app->m_eventBus.publish(WindowResizeEvent{ w, h });
     });
-
-    glfwSetKeyCallback(m_window, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
-        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-            glfwSetWindowShouldClose(window, GLFW_TRUE);
-    });
 }
 
 void Application::shutdown()
 {
+    m_moduleRegistry.clear();
+
     if (m_window)
     {
         glfwDestroyWindow(m_window);

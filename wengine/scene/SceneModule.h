@@ -8,10 +8,10 @@
 class SceneModule : public IModule
 {
 public:
-    void init()                   override;
-    void update(double deltaTime) override;
-    void render()                 override;
-    void shutdown()               override;
+    void init(ResourceRegistry& resources) override;
+    void update(double deltaTime)          override;
+    void render()                          override;
+    void shutdown()                        override;
 
     EntityID createEntity();
     void destroyEntity(EntityID id);

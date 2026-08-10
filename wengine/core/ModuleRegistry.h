@@ -7,15 +7,18 @@
 #include <vector>
 #include <unordered_map>
 
+class ResourceRegistry;
+
 class ModuleRegistry
 {
 public:
     void registerModule(std::string name, std::unique_ptr<IModule> module);
 
-    void init();
+    void init(ResourceRegistry& resources);
     void update(double deltaTime);
     void render();
     void shutdown();
+    void clear();
 
 private:
     struct ModuleEntry

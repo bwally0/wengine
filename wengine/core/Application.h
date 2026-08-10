@@ -1,7 +1,7 @@
 #pragma once
 
 #include "wengine/core/ModuleRegistry.h"
-#include "wengine/core/ServiceLocator.h"
+#include "wengine/core/ResourceRegistry.h"
 #include "wengine/core/EventBus.h"
 
 #include <string>
@@ -27,8 +27,7 @@ public:
 
     void run();
 
-    ServiceLocator& getServiceLocator() { return m_serviceLocator; }
-    EventBus&       getEventBus()       { return m_eventBus; }
+    GLFWwindow* getWindow() { return m_window; }
 
 private:
     bool initGLFW();
@@ -36,10 +35,10 @@ private:
     void initCallbacks();
     void shutdown();
 
-    AppConfig      m_config;
-    GLFWwindow*    m_window = nullptr;
-
-    EventBus       m_eventBus;
-    ServiceLocator m_serviceLocator;
-    ModuleRegistry m_moduleRegistry;
+    AppConfig        m_config;
+    GLFWwindow*      m_window = nullptr;
+    EventBus         m_eventBus;
+    
+    ResourceRegistry m_resourceRegistry;
+    ModuleRegistry   m_moduleRegistry;
 };
