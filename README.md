@@ -17,10 +17,27 @@ wengine is a modular game engine built around the ECS pattern and organizes func
 `Systems` are objects that operate on entities and components within the engine. A system reads and writes component data to produce the next frame's state. Systems have no lifecycles and own no resources.
 
 ## Build Instructions
+
+**Note:** Ensure `VCPKG_ROOT` environment variable is set to your vcpkg installation directory (e.g., `C:\vcpkg` on Windows, `/usr/local/share/vcpkg` on Linux).
+
+### Windows
+```bash
+cmake --preset windows-debug
+cmake --build build/windows-debug --config Debug
+.\build\windows-debug\Debug\wengine.exe
+```
+
+### Linux
+```bash
+cmake --preset linux-debug
+cmake --build build/linux-debug
+./build/linux-debug/wengine
+```
+
+### Auto-detect Platform
 ```bash
 cmake --preset debug
 cmake --build build/debug
-./build/debug/wengine
 ```
 
 ## Contributing
