@@ -1,10 +1,14 @@
 #include "wengine/core/InputModule.h"
 #include "wengine/core/ResourceRegistry.h"
+#include "wengine/core/Window.h"
 
 #include <spdlog/spdlog.h>
 
 void InputModule::init(ResourceRegistry& resources)
 {
+    auto& window = resources.get<Window>();
+    m_window = window.handle;
+    
     spdlog::info("InputModule: initialized");
 }
 
@@ -74,6 +78,24 @@ void InputModule::update(double deltaTime)
 void InputModule::shutdown()
 {
     spdlog::info("InputModule: shutdown");
+}
+
+void InputModule::setCursorMode(CursorMode mode)
+{
+    if (!m_window) return;
+    if (m_cursorMode == mode) return;
+
+    m_cursorMode = mode;
+
+    int glfwMode;
+    switch (mode)
+    {
+        case CursorMode::Normal:   glfwMode = GLFW_CURSOR_NORMAL;   break;
+        case CursorMode::Hidden:   glfwMode = GLFW_CURSOR_HIDDEN;   break;
+        case CursorMode::Disabled: glfwMode = GLFW_CURSOR_DISABLED; break;
+    }
+
+    glfwSetInputMode(m_window, GLFW_CURSOR, glfwMode);
 }
 
 bool InputModule::isKeyDown(int key) const

@@ -61,8 +61,9 @@ void GameModule::init(ResourceRegistry& resources)
         .position = { 0.0f, 0.0f, 2.0f }
     });
     m_scene.addComponent<Camera>(m_cameraEntity, Camera{
-        .active = true
+        .active     = true
     });
+    m_input.setCursorMode(CursorMode::Disabled);
 
     spdlog::info("GameModule: created free fly camera");
 }
@@ -77,15 +78,13 @@ void GameModule::update(double deltaTime)
         return;
     }
 
+    Camera* camera = m_scene.getComponent<Camera>(m_cameraEntity);
 
-    if (m_input.isMouseButtonDown(Mouse::Right))
-    {
-        float dx = static_cast<float>(m_input.mouseDeltaX()) * m_lookSensitivity;
-        float dy = static_cast<float>(m_input.mouseDeltaY()) * m_lookSensitivity;
+    float dx = static_cast<float>(m_input.mouseDeltaX()) * m_lookSensitivity;
+    float dy = static_cast<float>(m_input.mouseDeltaY()) * m_lookSensitivity;
 
-        m_yaw   += dx;
-        m_pitch -= dy;
-    }
+    m_yaw   += dx;
+    m_pitch -= dy;
 
     // clamp pitch
     if (m_pitch > 89.0f)  m_pitch = 89.0f;

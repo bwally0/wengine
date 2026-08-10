@@ -35,6 +35,13 @@ struct ScrollEvent
     double yOffset;
 };
 
+enum class CursorMode
+{
+    Normal,
+    Hidden,
+    Disabled
+};
+
 class InputModule : public IModule
 {
 public:
@@ -59,6 +66,9 @@ public:
     double mouseDeltaY() const { return m_mouseDeltaY; }
     double scrollDeltaX() const { return m_scrollDeltaX; }
     double scrollDeltaY() const { return m_scrollDeltaY; }
+
+    void setCursorMode(CursorMode mode);
+    CursorMode getCursorMode() const { return m_cursorMode; }
 
     void pushKeyEvent(int key, int action, int mods);
     void pushMouseButtonEvent(int button, int action, int mods);
@@ -96,4 +106,7 @@ private:
     double m_lastMouseX = 0.0;
     double m_lastMouseY = 0.0;
     bool   m_firstMouse = true;
+
+    GLFWwindow* m_window = nullptr;
+    CursorMode  m_cursorMode = CursorMode::Normal;
 };
