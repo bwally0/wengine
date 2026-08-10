@@ -6,12 +6,10 @@
 #include "wengine/core/Application.h"
 
 #include <glad/glad.h>
-#include <glm/gtc/matrix_transform.hpp>
 #include <spdlog/spdlog.h>
 
 RenderModule::RenderModule(SceneModule& scene)
     : m_scene(scene)
-    , m_projection(glm::mat4(1.0f))
 {
 }
 
@@ -23,9 +21,7 @@ void RenderModule::init(ResourceRegistry& resources)
     glEnable(GL_DEPTH_TEST);
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
-    updateProjection(m_config->width, m_config->height);
-
-    m_forwardRenderer = std::make_unique<ForwardRenderer>(m_scene, m_projection, *m_eventBus);
+    m_forwardRenderer = std::make_unique<ForwardRenderer>(m_scene, *m_eventBus, *m_config);
 
     spdlog::info("RenderModule: initialized");
 }
@@ -39,10 +35,4 @@ void RenderModule::render()
 void RenderModule::shutdown()
 {
     spdlog::info("RenderModule: shutdown");
-}
-
-void RenderModule::updateProjection(int width, int height)
-{
-    float aspect = static_cast<float>(width) / static_cast<float>(height);
-    m_projection = glm::perspective(glm::radians(m_fov), aspect, m_nearPlane, m_farPlane);
 }

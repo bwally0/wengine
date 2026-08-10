@@ -40,8 +40,10 @@ void Application::run()
     if (!m_window) return;
 
     // register engine resources before any module inits
-    m_resourceRegistry.provide<EventBus>(&m_eventBus);
+    m_windowResource.handle = m_window;
+    m_resourceRegistry.provide<Window>(&m_windowResource);
     m_resourceRegistry.provide<AppConfig>(&m_config);
+    m_resourceRegistry.provide<EventBus>(&m_eventBus);
 
     spdlog::info("OpenGL version: {}", (const char*)glGetString(GL_VERSION));
 

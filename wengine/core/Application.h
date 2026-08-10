@@ -3,6 +3,7 @@
 #include "wengine/core/ModuleRegistry.h"
 #include "wengine/core/ResourceRegistry.h"
 #include "wengine/core/EventBus.h"
+#include "wengine/core/Window.h"
 
 #include <string>
 
@@ -42,8 +43,10 @@ private:
     void initCoreModules();
     void shutdown();
 
-    AppConfig        m_config;
     GLFWwindow*      m_window = nullptr;
+    
+    Window           m_windowResource;
+    AppConfig        m_config;
     EventBus         m_eventBus;
 
     ResourceRegistry m_resourceRegistry;

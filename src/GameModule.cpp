@@ -2,18 +2,27 @@
 
 #include "GameModule.h"
 #include "wengine/core/ResourceRegistry.h"
+#include "wengine/core/Window.h"
 
 #include "wengine/scene/components/Transform.h"
 #include "wengine/scene/components/Mesh.h"
+#include "wengine/scene/components/Camera.h"
 #include "wengine/render/Shader.h"
 #include "wengine/render/VertexBuffer.h"
 #include "wengine/render/IndexBuffer.h"
 #include "wengine/render/VertexArray.h"
 
+#include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
 #include <spdlog/spdlog.h>
+
+#include <cmath>
 
 void GameModule::init(ResourceRegistry& resources)
 {
+    m_window = &resources.get<Window>();
+
     // vertex data: position (xyz) + color (rgb)
     float vertices[] = {
         -0.5f, -0.5f, 0.0f,   1.0f, 0.0f, 0.0f,  // bottom-left, red
@@ -45,20 +54,71 @@ void GameModule::init(ResourceRegistry& resources)
     });
 
     spdlog::info("GameModule: created test triangle");
+
+    // Static camera looking down -Z
+    m_cameraEntity = m_scene.createEntity();
+    m_scene.addComponent<Transform>(m_cameraEntity, Transform{
+        .position = { 0.0f, 0.0f, 2.0f }
+    });
+    m_scene.addComponent<Camera>(m_cameraEntity, Camera{
+        .active = true
+    });
+
+    spdlog::info("GameModule: created free fly camera");
 }
 
 void GameModule::update(double deltaTime)
 {
+    float dt = static_cast<float>(deltaTime);
+
     if (m_input.wasKeyPressed(GLFW_KEY_ESCAPE))
     {
-        spdlog::info("escape was pressed");
+        glfwSetWindowShouldClose(m_window->handle, GLFW_TRUE);
+        return;
     }
-    if (m_input.isKeyDown(GLFW_KEY_ESCAPE))
+
+
+    if (m_input.isMouseButtonDown(GLFW_MOUSE_BUTTON_RIGHT))
     {
-        spdlog::info("escape is down");
+        float dx = static_cast<float>(m_input.mouseDeltaX()) * m_lookSensitivity;
+        float dy = static_cast<float>(m_input.mouseDeltaY()) * m_lookSensitivity;
+
+        m_yaw   += dx;
+        m_pitch -= dy;
     }
-    if (m_input.wasKeyReleased(GLFW_KEY_ESCAPE))
-    {
-        spdlog::info("escape was released");
-    }
+
+    // Clamp pitch to avoid flipping
+    if (m_pitch > 89.0f)  m_pitch = 89.0f;
+    if (m_pitch < -89.0f) m_pitch = -89.0f;
+
+    // Build orientation from yaw/pitch
+    float yawRad   = glm::radians(m_yaw);
+    float pitchRad = glm::radians(m_pitch);
+
+    glm::vec3 forward;
+    forward.x = std::cos(yawRad) * std::cos(pitchRad);
+    forward.y = std::sin(pitchRad);
+    forward.z = std::sin(yawRad) * std::cos(pitchRad);
+    forward = glm::normalize(forward);
+
+    glm::vec3 worldUp = { 0.0f, 1.0f, 0.0f };
+    glm::vec3 right   = glm::normalize(glm::cross(forward, worldUp));
+    glm::vec3 up      = glm::normalize(glm::cross(right, forward));
+
+    // WASD movement
+    Transform* transform = m_scene.getComponent<Transform>(m_cameraEntity);
+    if (!transform) return;
+
+    float speed = m_moveSpeed * dt;
+
+    if (m_input.isKeyDown(GLFW_KEY_W)) transform->position += forward * speed;
+    if (m_input.isKeyDown(GLFW_KEY_S)) transform->position -= forward * speed;
+    if (m_input.isKeyDown(GLFW_KEY_A)) transform->position -= right * speed;
+    if (m_input.isKeyDown(GLFW_KEY_D)) transform->position += right * speed;
+    if (m_input.isKeyDown(GLFW_KEY_Q)) transform->position += worldUp * speed;
+    if (m_input.isKeyDown(GLFW_KEY_E)) transform->position -= worldUp * speed;
+
+    // Build quaternion from direction vectors
+    glm::mat3 rotMatrix(right, up, -forward);
+    transform->rotation = glm::quat_cast(rotMatrix);
 }
