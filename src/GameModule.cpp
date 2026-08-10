@@ -23,11 +23,11 @@ void GameModule::init(ResourceRegistry& resources)
 {
     m_window = &resources.get<Window>();
 
-    // vertex data: position (xyz) + color (rgb)
+    // hello triangle
     float vertices[] = {
-        -0.5f, -0.5f, 0.0f,   1.0f, 0.0f, 0.0f,  // bottom-left, red
-         0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,  // bottom-right, green
-         0.0f,  0.5f, 0.0f,   0.0f, 0.0f, 1.0f,  // top-center, blue
+        -0.5f, -0.5f, 0.0f,   1.0f, 0.0f, 0.0f,
+         0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,
+         0.0f,  0.5f, 0.0f,   0.0f, 0.0f, 1.0f,
     };
 
     uint32_t indices[] = { 0, 1, 2 };
@@ -55,7 +55,7 @@ void GameModule::init(ResourceRegistry& resources)
 
     spdlog::info("GameModule: created test triangle");
 
-    // Static camera looking down -Z
+    // create camera entity
     m_cameraEntity = m_scene.createEntity();
     m_scene.addComponent<Transform>(m_cameraEntity, Transform{
         .position = { 0.0f, 0.0f, 2.0f }
@@ -71,14 +71,14 @@ void GameModule::update(double deltaTime)
 {
     float dt = static_cast<float>(deltaTime);
 
-    if (m_input.wasKeyPressed(GLFW_KEY_ESCAPE))
+    if (m_input.wasKeyPressed(Key::Escape))
     {
         glfwSetWindowShouldClose(m_window->handle, GLFW_TRUE);
         return;
     }
 
 
-    if (m_input.isMouseButtonDown(GLFW_MOUSE_BUTTON_RIGHT))
+    if (m_input.isMouseButtonDown(Mouse::Right))
     {
         float dx = static_cast<float>(m_input.mouseDeltaX()) * m_lookSensitivity;
         float dy = static_cast<float>(m_input.mouseDeltaY()) * m_lookSensitivity;
@@ -87,11 +87,10 @@ void GameModule::update(double deltaTime)
         m_pitch -= dy;
     }
 
-    // Clamp pitch to avoid flipping
+    // clamp pitch
     if (m_pitch > 89.0f)  m_pitch = 89.0f;
     if (m_pitch < -89.0f) m_pitch = -89.0f;
 
-    // Build orientation from yaw/pitch
     float yawRad   = glm::radians(m_yaw);
     float pitchRad = glm::radians(m_pitch);
 
@@ -105,20 +104,18 @@ void GameModule::update(double deltaTime)
     glm::vec3 right   = glm::normalize(glm::cross(forward, worldUp));
     glm::vec3 up      = glm::normalize(glm::cross(right, forward));
 
-    // WASD movement
     Transform* transform = m_scene.getComponent<Transform>(m_cameraEntity);
     if (!transform) return;
 
     float speed = m_moveSpeed * dt;
 
-    if (m_input.isKeyDown(GLFW_KEY_W)) transform->position += forward * speed;
-    if (m_input.isKeyDown(GLFW_KEY_S)) transform->position -= forward * speed;
-    if (m_input.isKeyDown(GLFW_KEY_A)) transform->position -= right * speed;
-    if (m_input.isKeyDown(GLFW_KEY_D)) transform->position += right * speed;
-    if (m_input.isKeyDown(GLFW_KEY_Q)) transform->position += worldUp * speed;
-    if (m_input.isKeyDown(GLFW_KEY_E)) transform->position -= worldUp * speed;
+    if (m_input.isKeyDown(Key::W)) transform->position += forward * speed;
+    if (m_input.isKeyDown(Key::S)) transform->position -= forward * speed;
+    if (m_input.isKeyDown(Key::A)) transform->position -= right * speed;
+    if (m_input.isKeyDown(Key::D)) transform->position += right * speed;
+    if (m_input.isKeyDown(Key::Q)) transform->position += worldUp * speed;
+    if (m_input.isKeyDown(Key::E)) transform->position -= worldUp * speed;
 
-    // Build quaternion from direction vectors
     glm::mat3 rotMatrix(right, up, -forward);
     transform->rotation = glm::quat_cast(rotMatrix);
 }

@@ -6,5 +6,5 @@ struct Camera
     float nearPlane = 0.1f;
     float farPlane  = 1000.0f;
     bool  active    = false;
-    int   priority  = 0; // highest priority wins
+    int   priority  = 0;
 };

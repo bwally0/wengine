@@ -1,6 +1,8 @@
 #pragma once
 
 #include "wengine/core/IModule.h"
+#include "wengine/core/Key.h"
+#include "wengine/core/Mouse.h"
 
 #include <GLFW/glfw3.h>
 #include <string>

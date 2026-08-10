@@ -55,7 +55,7 @@ void Application::run()
 
     while (!glfwWindowShouldClose(m_window))
     {
-        glfwPollEvents(); // poll OS events — triggers input callbacks
+        glfwPollEvents(); // poll OS events, triggers input callbacks
 
         double currentTime = glfwGetTime();
         double frameTime   = currentTime - lastTime;
