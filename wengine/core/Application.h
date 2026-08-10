@@ -6,8 +6,7 @@
 
 #include <string>
 
-// forward declare to avoid pulling GLFW into every file that includes Application.h
-struct GLFWwindow;
+struct GLFWwindow; // forward declare
 
 struct AppConfig
 {
@@ -16,6 +15,11 @@ struct AppConfig
     std::string title     = "wengine";
     double      timestep  = 1.0 / 60.0; // 60Hz
 };
+
+// core engine modules
+class InputModule;
+class SceneModule;
+class RenderModule;
 
 class Application
 {
@@ -27,18 +31,25 @@ public:
 
     void run();
 
-    GLFWwindow* getWindow() { return m_window; }
+    InputModule&  getInputModule()  { return *m_inputModule; }
+    SceneModule&  getSceneModule()  { return *m_sceneModule; }
+    RenderModule& getRenderModule() { return *m_renderModule; }
 
 private:
     bool initGLFW();
     bool initGLAD();
     void initCallbacks();
+    void initCoreModules();
     void shutdown();
 
     AppConfig        m_config;
     GLFWwindow*      m_window = nullptr;
     EventBus         m_eventBus;
-    
+
     ResourceRegistry m_resourceRegistry;
     ModuleRegistry   m_moduleRegistry;
+
+    InputModule*  m_inputModule  = nullptr;
+    SceneModule*  m_sceneModule  = nullptr;
+    RenderModule* m_renderModule = nullptr;
 };

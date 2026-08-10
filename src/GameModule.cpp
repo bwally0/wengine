@@ -1,3 +1,5 @@
+#include <glad/glad.h>
+
 #include "GameModule.h"
 #include "wengine/core/ResourceRegistry.h"
 
@@ -8,7 +10,6 @@
 #include "wengine/render/IndexBuffer.h"
 #include "wengine/render/VertexArray.h"
 
-#include <glad/glad.h>
 #include <spdlog/spdlog.h>
 
 void GameModule::init(ResourceRegistry& resources)
@@ -44,4 +45,20 @@ void GameModule::init(ResourceRegistry& resources)
     });
 
     spdlog::info("GameModule: created test triangle");
+}
+
+void GameModule::update(double deltaTime)
+{
+    if (m_input.wasKeyPressed(GLFW_KEY_ESCAPE))
+    {
+        spdlog::info("escape was pressed");
+    }
+    if (m_input.isKeyDown(GLFW_KEY_ESCAPE))
+    {
+        spdlog::info("escape is down");
+    }
+    if (m_input.wasKeyReleased(GLFW_KEY_ESCAPE))
+    {
+        spdlog::info("escape was released");
+    }
 }

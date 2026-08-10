@@ -1,8 +1,13 @@
 #include "wengine/core/Application.h"
 #include "wengine/core/events/WindowResizeEvent.h"
+#include "wengine/scene/SceneModule.h"
+#include "wengine/render/RenderModule.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+
+#include "wengine/core/InputModule.h"
+
 #include <spdlog/spdlog.h>
 
 Application::Application(AppConfig config)
@@ -16,6 +21,7 @@ Application::Application(AppConfig config)
         glfwTerminate();
         return;
     }
+    initCoreModules();
     initCallbacks();
 }
 
@@ -47,7 +53,7 @@ void Application::run()
 
     while (!glfwWindowShouldClose(m_window))
     {
-        glfwPollEvents(); // poll OS events
+        glfwPollEvents(); // poll OS events — triggers input callbacks
 
         double currentTime = glfwGetTime();
         double frameTime   = currentTime - lastTime;
@@ -71,6 +77,21 @@ void Application::run()
     }
 
     m_moduleRegistry.shutdown();
+}
+
+void Application::initCoreModules()
+{
+    auto input = std::make_unique<InputModule>();
+    m_inputModule = input.get();
+    m_moduleRegistry.registerModule("InputModule", std::move(input));
+
+    auto scene = std::make_unique<SceneModule>();
+    m_sceneModule = scene.get();
+    m_moduleRegistry.registerModule("SceneModule", std::move(scene));
+
+    auto renderer = std::make_unique<RenderModule>(*m_sceneModule);
+    m_renderModule = renderer.get();
+    m_moduleRegistry.registerModule("RenderModule", std::move(renderer));
 }
 
 bool Application::initGLFW()
@@ -122,6 +143,26 @@ void Application::initCallbacks()
         glViewport(0, 0, w, h);
         auto* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
         app->m_eventBus.publish(WindowResizeEvent{ w, h });
+    });
+
+    glfwSetKeyCallback(m_window, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
+        auto* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
+        app->m_inputModule->pushKeyEvent(key, action, mods);
+    });
+
+    glfwSetMouseButtonCallback(m_window, [](GLFWwindow* window, int button, int action, int mods) {
+        auto* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
+        app->m_inputModule->pushMouseButtonEvent(button, action, mods);
+    });
+
+    glfwSetCursorPosCallback(m_window, [](GLFWwindow* window, double x, double y) {
+        auto* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
+        app->m_inputModule->pushMouseMove(x, y);
+    });
+
+    glfwSetScrollCallback(m_window, [](GLFWwindow* window, double xOffset, double yOffset) {
+        auto* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
+        app->m_inputModule->pushScroll(xOffset, yOffset);
     });
 }
 
