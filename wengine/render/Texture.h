@@ -2,11 +2,16 @@
 
 #include <string>
 #include <cstdint>
+#include <memory>
+
+struct TextureData;
 
 class Texture
 {
 public:
-    explicit Texture(const std::string& path);
+    static std::shared_ptr<Texture> create(const std::string& path);
+    static std::shared_ptr<Texture> create(const TextureData& data);
+    
     ~Texture();
 
     Texture(const Texture&)            = delete;  // non-copyable
@@ -19,11 +24,14 @@ public:
     void bind(uint32_t slot = 0) const;
     void unbind() const;
 
-    int width()    const { return m_width; }
-    int height()   const { return m_height; }
-    int channels() const { return m_channels; }
+    uint32_t getHandle() const { return m_id; }
+    int width()          const { return m_width; }
+    int height()         const { return m_height; }
+    int channels()       const { return m_channels; }
 
 private:
+    Texture() = default; // Private for factory pattern
+    
     uint32_t m_id       = 0;
     int      m_width    = 0;
     int      m_height   = 0;
