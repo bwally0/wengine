@@ -6,8 +6,10 @@
 #include "wengine/core/Window.h"
 
 #include <string>
+#include <memory>
 
 struct GLFWwindow; // forward declare
+class AssetRegistry;
 
 struct AppConfig
 {
@@ -55,4 +57,7 @@ private:
     InputModule*  m_inputModule  = nullptr;
     SceneModule*  m_sceneModule  = nullptr;
     RenderModule* m_renderModule = nullptr;
+
+    // Asset management
+    std::unique_ptr<AssetRegistry> m_assetRegistry;
 };

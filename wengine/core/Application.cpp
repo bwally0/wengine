@@ -2,6 +2,7 @@
 #include "wengine/core/events/WindowResizeEvent.h"
 #include "wengine/scene/SceneModule.h"
 #include "wengine/render/RenderModule.h"
+#include "wengine/asset/AssetRegistry.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -44,6 +45,10 @@ void Application::run()
     m_resourceRegistry.provide<Window>(&m_windowResource);
     m_resourceRegistry.provide<AppConfig>(&m_config);
     m_resourceRegistry.provide<EventBus>(&m_eventBus);
+
+    // create and register asset registry
+    m_assetRegistry = std::make_unique<AssetRegistry>();
+    m_resourceRegistry.provide<AssetRegistry>(m_assetRegistry.get());
 
     spdlog::info("OpenGL version: {}", (const char*)glGetString(GL_VERSION));
 
@@ -171,6 +176,13 @@ void Application::initCallbacks()
 void Application::shutdown()
 {
     m_moduleRegistry.clear();
+
+    // clean up asset registry
+    if (m_assetRegistry)
+    {
+        m_assetRegistry->clear();
+        m_assetRegistry.reset();
+    }
 
     if (m_window)
     {

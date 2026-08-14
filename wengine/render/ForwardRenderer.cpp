@@ -1,11 +1,14 @@
 #include "wengine/render/ForwardRenderer.h"
 
 #include "wengine/scene/SceneModule.h"
-#include "wengine/scene/components/Transform.h"
-#include "wengine/scene/components/Mesh.h"
-#include "wengine/scene/components/Camera.h"
+#include "wengine/scene/components/TransformComponent.h"
+#include "wengine/scene/components/MeshComponent.h"
+#include "wengine/scene/components/RenderComponent.h"
+#include "wengine/scene/components/CameraComponent.h"
 #include "wengine/core/Application.h"
 #include "wengine/core/events/WindowResizeEvent.h"
+#include "wengine/render/Mesh.h"
+#include "wengine/render/Material.h"
 
 #include <glad/glad.h>
 #include <glm/gtc/matrix_transform.hpp>
@@ -22,23 +25,23 @@ ForwardRenderer::ForwardRenderer(SceneModule& scene, EventBus& bus, const AppCon
 
 void ForwardRenderer::render()
 {
-    auto& cameraPool = m_scene.query<Camera>();
+    auto& cameraPool = m_scene.query<CameraComponent>();
     auto& cameras    = cameraPool.components();
     auto& cameraEntities = cameraPool.entities();
 
-    Transform* cameraTransform = nullptr;
-    Camera*    activeCamera    = nullptr;
+    TransformComponent* cameraTransform = nullptr;
+    CameraComponent*    activeCamera    = nullptr;
 
     // pick active camera
     for (size_t i = 0; i < cameras.size(); i++)
     {
-        Camera& camera = cameras[i];
+        CameraComponent& camera = cameras[i];
         if (!camera.active) continue;
 
         if (!activeCamera || camera.priority > activeCamera->priority)
         {
             EntityID entity = cameraEntities[i];
-            Transform* transform = m_scene.getComponent<Transform>(entity);
+            TransformComponent* transform = m_scene.getComponent<TransformComponent>(entity);
             if (transform)
             {
                 activeCamera    = &camera;
@@ -60,30 +63,41 @@ void ForwardRenderer::render()
         activeCamera->farPlane
     );
 
-    // render all mesh entities
-    auto& meshPool = m_scene.query<Mesh>();
-    auto& meshes   = meshPool.components();
+    // render all entities with MeshComponent
+    auto& meshPool = m_scene.query<MeshComponent>();
+    auto& meshComponents = meshPool.components();
     auto& entities = meshPool.entities();
 
-    for (size_t i = 0; i < meshes.size(); i++)
+    for (size_t i = 0; i < meshComponents.size(); i++)
     {
-        Mesh&    mesh   = meshes[i];
+        MeshComponent& meshComp = meshComponents[i];
         EntityID entity = entities[i];
 
-        if (!mesh.vertexArray || !mesh.indexBuffer || !mesh.shader) continue;
+        // Must have RenderComponent
+        RenderComponent* renderComp = m_scene.getComponent<RenderComponent>(entity);
+        if (!renderComp || !renderComp->material) continue;
 
-        Transform* transform = m_scene.getComponent<Transform>(entity);
+        // Must have TransformComponent
+        TransformComponent* transform = m_scene.getComponent<TransformComponent>(entity);
         if (!transform) continue;
 
+        // Validate resources
+        if (!meshComp.mesh || !renderComp->material->shader) continue;
+
+        // Build model matrix
         glm::mat4 model = glm::translate(glm::mat4(1.0f), transform->position)
                         * glm::mat4_cast(transform->rotation)
                         * glm::scale(glm::mat4(1.0f), transform->scale);
 
         glm::mat4 mvp = projection * view * model;
 
-        mesh.shader->bind();
-        mesh.shader->setMat4("u_MVP", mvp);
-        mesh.vertexArray->bind();
-        glDrawElements(GL_TRIANGLES, mesh.indexBuffer->count(), GL_UNSIGNED_INT, nullptr);
+        // Bind material (shader + textures)
+        renderComp->material->bind();
+        renderComp->material->shader->setMat4("u_MVP", mvp);
+        renderComp->material->shader->setMat4("u_Model", model);
+
+        // Draw mesh
+        meshComp.mesh->bind();
+        glDrawElements(GL_TRIANGLES, meshComp.mesh->getIndexCount(), GL_UNSIGNED_INT, nullptr);
     }
 }

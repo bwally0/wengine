@@ -3,11 +3,15 @@
 #include "GameModule.h"
 #include "wengine/core/ResourceRegistry.h"
 #include "wengine/core/Window.h"
+#include "wengine/asset/AssetRegistry.h"
 
-#include "wengine/scene/components/Transform.h"
-#include "wengine/scene/components/Mesh.h"
-#include "wengine/scene/components/Camera.h"
+#include "wengine/scene/components/TransformComponent.h"
+#include "wengine/scene/components/MeshComponent.h"
+#include "wengine/scene/components/RenderComponent.h"
+#include "wengine/scene/components/CameraComponent.h"
 #include "wengine/render/Shader.h"
+#include "wengine/render/Material.h"
+#include "wengine/render/Mesh.h"
 #include "wengine/render/VertexBuffer.h"
 #include "wengine/render/IndexBuffer.h"
 #include "wengine/render/VertexArray.h"
@@ -22,46 +26,58 @@
 void GameModule::init(ResourceRegistry& resources)
 {
     m_window = &resources.get<Window>();
+    auto& assets = resources.get<AssetRegistry>();
 
-    // hello triangle
-    float vertices[] = {
-        -0.5f, -0.5f, 0.0f,   1.0f, 0.0f, 0.0f,
-         0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,
-         0.0f,  0.5f, 0.0f,   0.0f, 0.0f, 1.0f,
-    };
+    // Load crate mesh and texture using AssetRegistry
+    auto crateMesh = assets.loadMesh("assets/models/crate.fbx");
+    if (!crateMesh)
+    {
+        spdlog::error("GameModule: Failed to load crate mesh");
+        return;
+    }
 
-    uint32_t indices[] = { 0, 1, 2 };
+    // Create material with textured shader and diffuse texture
+    auto crateMaterial = assets.createMaterial(
+        "assets/shaders/textured.vert",
+        "assets/shaders/textured.frag",
+        "assets/textures/crate_diffuse.png"
+    );
+    
+    if (!crateMaterial)
+    {
+        spdlog::error("GameModule: Failed to create crate material");
+        return;
+    }
 
-    auto shader = std::make_shared<Shader>("assets/shaders/basic.vert", "assets/shaders/basic.frag");
-    auto vbo    = std::make_shared<VertexBuffer>(vertices, sizeof(vertices));
-    auto ibo    = std::make_shared<IndexBuffer>(indices, 3);
-    auto vao    = std::make_shared<VertexArray>();
-
-    vao->addVertexBuffer(*vbo, {
-        { 0, 3, GL_FLOAT, false, 6 * sizeof(float), 0 },
-        { 1, 3, GL_FLOAT, false, 6 * sizeof(float), 3 * sizeof(float) },
+    // Create crate entity
+    EntityID crate = m_scene.createEntity();
+    
+    m_scene.addComponent<TransformComponent>(crate, TransformComponent{
+        .position = {0.0f, 0.0f, -3.0f},
+        .rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f),
+        .scale = {0.05f, 0.05f, 0.05f}
     });
-    vao->setIndexBuffer(*ibo);
-
-    EntityID triangle = m_scene.createEntity();
-    m_scene.addComponent<Transform>(triangle, Transform{
-        .position = { 0.0f, 0.0f, -2.0f }
+    
+    m_scene.addComponent<MeshComponent>(crate, MeshComponent{
+        .mesh = crateMesh
     });
-    m_scene.addComponent<Mesh>(triangle, Mesh{
-        .vertexArray = vao,
-        .indexBuffer = ibo,
-        .shader      = shader
+    
+    m_scene.addComponent<RenderComponent>(crate, RenderComponent{
+        .material = crateMaterial
     });
 
-    spdlog::info("GameModule: created test triangle");
+    spdlog::info("GameModule: created textured crate");
+
+    // Log asset registry statistics
+    assets.logStatistics();
 
     // create camera entity
     m_cameraEntity = m_scene.createEntity();
-    m_scene.addComponent<Transform>(m_cameraEntity, Transform{
+    m_scene.addComponent<TransformComponent>(m_cameraEntity, TransformComponent{
         .position = { 0.0f, 0.0f, 2.0f }
     });
-    m_scene.addComponent<Camera>(m_cameraEntity, Camera{
-        .active     = true
+    m_scene.addComponent<CameraComponent>(m_cameraEntity, CameraComponent{
+        .active = true
     });
     m_input.setCursorMode(CursorMode::Disabled);
 
@@ -78,7 +94,7 @@ void GameModule::update(double deltaTime)
         return;
     }
 
-    Camera* camera = m_scene.getComponent<Camera>(m_cameraEntity);
+    CameraComponent* camera = m_scene.getComponent<CameraComponent>(m_cameraEntity);
 
     float dx = static_cast<float>(m_input.mouseDeltaX()) * m_lookSensitivity;
     float dy = static_cast<float>(m_input.mouseDeltaY()) * m_lookSensitivity;
@@ -103,7 +119,7 @@ void GameModule::update(double deltaTime)
     glm::vec3 right   = glm::normalize(glm::cross(forward, worldUp));
     glm::vec3 up      = glm::normalize(glm::cross(right, forward));
 
-    Transform* transform = m_scene.getComponent<Transform>(m_cameraEntity);
+    TransformComponent* transform = m_scene.getComponent<TransformComponent>(m_cameraEntity);
     if (!transform) return;
 
     float speed = m_moveSpeed * dt;

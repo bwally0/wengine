@@ -2,7 +2,7 @@
 
 #include <string>
 
-struct Tag
+struct TagComponent
 {
     std::string name;
 };

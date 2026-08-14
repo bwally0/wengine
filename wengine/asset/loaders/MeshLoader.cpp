@@ -26,8 +26,8 @@ uint32_t MeshLoader::getDefaultFlags()
            aiProcess_GenNormals            |  // Generate normals if missing
            aiProcess_CalcTangentSpace      |  // Calculate tangents and bitangents
            aiProcess_JoinIdenticalVertices |  // Optimize by merging identical vertices
-           aiProcess_SortByPType           |  // Split meshes by primitive type
-           aiProcess_FlipUVs;                 // Flip UVs (OpenGL texture coords)
+           aiProcess_SortByPType;             // Split meshes by primitive type
+           // Note: aiProcess_FlipUVs removed, flip textures instead in TextureLoader
 }
 
 MeshData MeshLoader::load(const std::string& path)

@@ -1,6 +1,6 @@
 #pragma once
 
-struct Camera
+struct CameraComponent
 {
     float fov       = 45.0f;
     float nearPlane = 0.1f;
