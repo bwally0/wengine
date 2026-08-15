@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <stdexcept>
 #include <string>
+#include <vector>
 #include <cstdint>
 
 uint32_t MeshData::getVertexCount() const
@@ -233,10 +234,93 @@ uint32_t MeshLoader::getMeshCount(const std::string& path)
 
 bool MeshLoader::isSupported(const std::string& path)
 {
-    std::string ext = path.substr(path.find_last_of('.') + 1);
+    // Find the file extension
+    size_t dotPos = path.find_last_of('.');
+    if (dotPos == std::string::npos)
+        return false;
+    
+    std::string ext = path.substr(dotPos + 1);
     std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
     
-    std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+    // List of all supported Assimp import formats
+    // Based on: https://github.com/assimp/assimp/blob/master/doc/Fileformats.md
+    static const std::vector<std::string> supportedExtensions = {
+        // Common formats
+        "3ds",      // 3D Studio
+        "3mf",      // 3D Manufacturing Format
+        "dae",      // Collada
+        "fbx",      // Autodesk FBX
+        "gltf",     // glTF 1.0/2.0
+        "glb",      // glTF binary
+        "obj",      // Wavefront OBJ
+        "stl",      // Stereolithography
+        "ply",      // Stanford PLY
+        "blend",    // Blender (deprecated but still supported)
+        
+        // Other supported formats
+        "3d",       // Unreal
+        "ac",       // AC3D
+        "ac3d",     // AC3D
+        "acc",      // ACC
+        "amj",      // AMJ
+        "ase",      // 3DS Max ASE
+        "ask",      // ASK
+        "b3d",      // Blitz3D
+        "bvh",      // Biovision BVH
+        "csm",      // CSM
+        "cob",      // TrueSpace COB
+        "dxf",      // AutoCAD DXF
+        "enff",     // ENFF
+        "hmp",      // HMP
+        "hmb",      // HMB
+        "ifc",      // IFC-STEP
+        "ifczip",   // IFC-STEP (zipped)
+        "iqm",      // Inter-Quake Model
+        "irr",      // Irrlicht
+        "irrmesh",  // Irrlicht Mesh
+        "lwo",      // LightWave Object
+        "lws",      // LightWave Scene
+        "lxo",      // Modo
+        "m3d",      // Model 3D
+        "md2",      // Quake II
+        "md3",      // Quake III
+        "md5mesh",  // Doom 3
+        "md5anim",  // Doom 3
+        "md5camera",// Doom 3
+        "mdc",      // Return to Castle Wolfenstein
+        "mdl",      // Quake I / GameStudio
+        "mesh",     // Ogre Mesh
+        "mesh.xml", // Ogre Mesh XML
+        "mot",      // Motion
+        "ms3d",     // Milkshape 3D
+        "ndo",      // Nendo
+        "nff",      // Neutral File Format
+        "off",      // Object File Format
+        "ogex",     // Open Game Engine Exchange
+        "pmx",      // MikuMikuDance
+        "prj",      // Project
+        "q3o",      // Quick3D
+        "q3s",      // Quick3D
+        "raw",      // Raw
+        "scn",      // Scene
+        "sib",      // SIB
+        "smd",      // Valve SMD
+        "stp",      // STEP
+        "ter",      // Terragen Terrain
+        "uc",       // UC
+        "usd",      // Universal Scene Description
+        "usda",     // USD ASCII
+        "usdc",     // USD Crate (binary)
+        "usdz",     // USD zip archive
+        "vta",      // Valve VTA
+        "x",        // DirectX X
+        "x3d",      // Extensible 3D
+        "x3db",     // X3D binary
+        "xgl",      // XGL
+        "xml",      // Generic XML (context-dependent)
+        "zgl",      // ZGL
+        "c4d"       // Cinema 4D (requires external SDK)
+    };
     
-    return ext == "obj" || ext == "fbx" || ext == "stl";
+    return std::find(supportedExtensions.begin(), supportedExtensions.end(), ext) != supportedExtensions.end();
 }

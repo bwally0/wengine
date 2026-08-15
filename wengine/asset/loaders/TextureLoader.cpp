@@ -4,6 +4,7 @@
 #include <spdlog/spdlog.h>
 #include <algorithm>
 #include <stdexcept>
+#include <vector>
 
 void TextureData::free()
 {
@@ -57,11 +58,37 @@ TextureData TextureLoader::load(const std::string& path, int desiredChannels)
 
 bool TextureLoader::isSupported(const std::string& path)
 {
-    std::string ext = path.substr(path.find_last_of('.') + 1);
+    // Find the file extension
+    size_t dotPos = path.find_last_of('.');
+    if (dotPos == std::string::npos)
+        return false;
+    
+    std::string ext = path.substr(dotPos + 1);
     std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
-
-    return ext == "png"  || ext == "jpg"  || ext == "jpeg" ||
-           ext == "tga"  || ext == "bmp"  || ext == "psd"  ||
-           ext == "gif"  || ext == "hdr"  || ext == "pic"  ||
-           ext == "pnm"  || ext == "pgm"  || ext == "ppm";
+    
+    // List of all supported stb_image formats
+    // Based on: https://github.com/nothings/stb/blob/master/stb_image.h
+    static const std::vector<std::string> supportedExtensions = {
+        "jpg",      // JPEG
+        "jpeg",     // JPEG
+        "jpe",      // JPEG
+        "jfif",     // JPEG File Interchange Format
+        "png",      // Portable Network Graphics
+        "tga",      // Targa
+        "icb",      // Targa (alternate extension)
+        "vda",      // Targa (alternate extension)
+        "vst",      // Targa (alternate extension)
+        "bmp",      // Windows Bitmap
+        "dib",      // Device Independent Bitmap
+        "psd",      // Adobe Photoshop
+        "gif",      // Graphics Interchange Format
+        "hdr",      // Radiance RGBE
+        "rgbe",     // Radiance RGBE (alternate extension)
+        "pic",      // Softimage PIC
+        "pnm",      // Portable Any Map
+        "ppm",      // Portable Pixel Map (binary only)
+        "pgm"       // Portable Gray Map (binary only)
+    };
+    
+    return std::find(supportedExtensions.begin(), supportedExtensions.end(), ext) != supportedExtensions.end();
 }
