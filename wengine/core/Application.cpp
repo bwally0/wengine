@@ -51,6 +51,9 @@ void Application::run()
     m_resourceRegistry.provide<AssetRegistry>(m_assetRegistry.get());
 
     spdlog::info("OpenGL version: {}", (const char*)glGetString(GL_VERSION));
+    spdlog::info("GPU: {}", (const char*)glGetString(GL_RENDERER));
+    spdlog::info("Vendor: {}", (const char*)glGetString(GL_VENDOR));
+    spdlog::info("GLSL version: {}", (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION));
 
     m_moduleRegistry.init(m_resourceRegistry);
 

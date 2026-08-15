@@ -16,6 +16,7 @@ public:
     EntityID createEntity();
     void destroyEntity(EntityID id);
     bool isAlive(EntityID id) const;
+    size_t getEntityCount() const { return m_entityManager.getEntityCount(); }
 
     template<typename TComponent>
     void addComponent(EntityID id, TComponent component)

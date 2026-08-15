@@ -9,6 +9,7 @@
 #include "wengine/scene/components/MeshComponent.h"
 #include "wengine/scene/components/RenderComponent.h"
 #include "wengine/scene/components/CameraComponent.h"
+#include "wengine/scene/components/PointLightComponent.h"
 #include "wengine/render/Shader.h"
 #include "wengine/render/Material.h"
 #include "wengine/render/Mesh.h"
@@ -28,7 +29,6 @@ void GameModule::init(ResourceRegistry& resources)
     m_window = &resources.get<Window>();
     auto& assets = resources.get<AssetRegistry>();
 
-    // Load crate mesh and texture using AssetRegistry
     auto crateMesh = assets.loadMesh("assets/models/crate.fbx");
     if (!crateMesh)
     {
@@ -36,11 +36,11 @@ void GameModule::init(ResourceRegistry& resources)
         return;
     }
 
-    // Create material with textured shader and diffuse texture
     auto crateMaterial = assets.createMaterial(
-        "assets/shaders/textured.vert",
-        "assets/shaders/textured.frag",
-        "assets/textures/crate_diffuse.png"
+        "assets/shaders/pbr.vert",               // PBR vertex shader
+        "assets/shaders/pbr.frag",               // PBR fragment shader
+        "assets/textures/crate_diffuse.png",     // Diffuse/albedo
+        "assets/textures/crate_normal.png"       // Normal map
     );
     
     if (!crateMaterial)
@@ -49,7 +49,12 @@ void GameModule::init(ResourceRegistry& resources)
         return;
     }
 
-    // Create crate entity
+    // Set PBR material properties (wood crate)
+    crateMaterial->color = glm::vec3(1.0f, 1.0f, 1.0f);  // Use texture color
+    crateMaterial->metallic = 0.0f;    // Non-metallic (wood)
+    crateMaterial->roughness = 0.7f;   // Fairly rough surface
+    crateMaterial->emissive = glm::vec3(0.0f);  // No self-illumination
+
     EntityID crate = m_scene.createEntity();
     
     m_scene.addComponent<TransformComponent>(crate, TransformComponent{
@@ -66,12 +71,57 @@ void GameModule::init(ResourceRegistry& resources)
         .material = crateMaterial
     });
 
-    spdlog::info("GameModule: created textured crate");
+    spdlog::info("GameModule: created PBR crate with normal mapping");
+    
+    // Red light on the left
+    EntityID redLight = m_scene.createEntity();
+    m_scene.addComponent<TransformComponent>(redLight, TransformComponent{
+        .position = {-3.0f, 1.0f, -3.0f}
+    });
+    m_scene.addComponent<PointLightComponent>(redLight, PointLightComponent{
+        .color = glm::vec3(1.0f, 0.2f, 0.2f),  // Red
+        .intensity = 10.0f,
+        .enabled = true,
+        .constant = 1.0f,
+        .linear = 0.09f,
+        .quadratic = 0.032f
+    });
+    
+    spdlog::info("GameModule: created red point light at (-3, 1, -3)");
 
-    // Log asset registry statistics
+    // Blue light on the right
+    EntityID blueLight = m_scene.createEntity();
+    m_scene.addComponent<TransformComponent>(blueLight, TransformComponent{
+        .position = {3.0f, 1.0f, -3.0f}
+    });
+    m_scene.addComponent<PointLightComponent>(blueLight, PointLightComponent{
+        .color = glm::vec3(0.2f, 0.2f, 1.0f),  // Blue
+        .intensity = 10.0f,
+        .enabled = true,
+        .constant = 1.0f,
+        .linear = 0.09f,
+        .quadratic = 0.032f
+    });
+    
+    spdlog::info("GameModule: created blue point light at (3, 1, -3)");
+
+    // White light above and behind camera (key light)
+    EntityID keyLight = m_scene.createEntity();
+    m_scene.addComponent<TransformComponent>(keyLight, TransformComponent{
+        .position = {0.0f, 3.0f, 0.0f}
+    });
+    m_scene.addComponent<PointLightComponent>(keyLight, PointLightComponent{
+        .color = glm::vec3(1.0f, 1.0f, 1.0f),  // White
+        .intensity = 15.0f,
+        .enabled = true,
+        .constant = 1.0f,
+        .linear = 0.09f,
+        .quadratic = 0.032f
+    });
+    
+    spdlog::info("GameModule: created white key light at (0, 3, 0)");
     assets.logStatistics();
 
-    // create camera entity
     m_cameraEntity = m_scene.createEntity();
     m_scene.addComponent<TransformComponent>(m_cameraEntity, TransformComponent{
         .position = { 0.0f, 0.0f, 2.0f }

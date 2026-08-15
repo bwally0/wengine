@@ -125,7 +125,10 @@ std::shared_ptr<Shader> AssetRegistry::loadShader(
 std::shared_ptr<Material> AssetRegistry::createMaterial(
     const std::string& shaderVert,
     const std::string& shaderFrag,
-    const std::string& diffusePath)
+    const std::string& diffusePath,
+    const std::string& normalPath,
+    const std::string& specularPath,
+    const std::string& emissivePath)
 {
     // Load shader (cached)
     auto shader = loadShader(shaderVert, shaderFrag);
@@ -139,7 +142,7 @@ std::shared_ptr<Material> AssetRegistry::createMaterial(
     auto material = std::make_shared<Material>();
     material->shader = shader;
     
-    // Load texture if provided (cached)
+    // Load diffuse texture if provided (cached)
     if (!diffusePath.empty())
     {
         material->diffuseTexture = loadTexture(diffusePath);
@@ -147,6 +150,39 @@ std::shared_ptr<Material> AssetRegistry::createMaterial(
         {
             spdlog::warn("AssetRegistry: Failed to load diffuse texture '{}' for material", 
                          diffusePath);
+        }
+    }
+    
+    // Load normal texture if provided (cached)
+    if (!normalPath.empty())
+    {
+        material->normalTexture = loadTexture(normalPath);
+        if (!material->normalTexture)
+        {
+            spdlog::warn("AssetRegistry: Failed to load normal texture '{}' for material", 
+                         normalPath);
+        }
+    }
+    
+    // Load specular texture if provided (cached)
+    if (!specularPath.empty())
+    {
+        material->specularTexture = loadTexture(specularPath);
+        if (!material->specularTexture)
+        {
+            spdlog::warn("AssetRegistry: Failed to load specular texture '{}' for material", 
+                         specularPath);
+        }
+    }
+    
+    // Load emissive texture if provided (cached)
+    if (!emissivePath.empty())
+    {
+        material->emissiveTexture = loadTexture(emissivePath);
+        if (!material->emissiveTexture)
+        {
+            spdlog::warn("AssetRegistry: Failed to load emissive texture '{}' for material", 
+                         emissivePath);
         }
     }
     

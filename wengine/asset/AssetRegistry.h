@@ -51,17 +51,23 @@ public:
         const std::string& fragmentPath
     );
 
-    /** @brief Creates a material using the specified shader and optional diffuse texture.
+    /** @brief Creates a material using the specified shader and optional texture maps.
      *  
      * @param shaderVert The file path to the vertex shader.
      * @param shaderFrag The file path to the fragment shader.
-     * @param diffusePath Optional file path to the diffuse texture.
+     * @param diffusePath Optional file path to the diffuse/albedo texture.
+     * @param normalPath Optional file path to the normal map texture.
+     * @param specularPath Optional file path to the specular/metallic-roughness texture.
+     * @param emissivePath Optional file path to the emissive texture.
      * @return std::shared_ptr<Material> A shared pointer to the created material, or nullptr if creation failed.
      */
     std::shared_ptr<Material> createMaterial(
         const std::string& shaderVert,
         const std::string& shaderFrag,
-        const std::string& diffusePath = ""
+        const std::string& diffusePath = "",
+        const std::string& normalPath = "",
+        const std::string& specularPath = "",
+        const std::string& emissivePath = ""
     );
 
     /** @brief Checks if a mesh is already cached for the specified path.

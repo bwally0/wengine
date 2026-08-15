@@ -13,6 +13,7 @@ public:
     EntityID create();
     void destroy(EntityID id);
     bool isAlive(EntityID id) const;
+    size_t getEntityCount() const { return m_aliveEntities.size(); }
 
 private:
     EntityID                     m_nextID = 1; // 0 is NULL_ENTITY

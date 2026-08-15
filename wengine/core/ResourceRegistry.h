@@ -31,6 +31,17 @@ public:
     }
 
     template<typename TResource>
+    TResource* tryGet()
+    {
+        auto it = m_resources.find(std::type_index(typeid(TResource)));
+        if (it == m_resources.end())
+        {
+            return nullptr;
+        }
+        return static_cast<TResource*>(it->second);
+    }
+
+    template<typename TResource>
     bool has() const
     {
         return m_resources.count(std::type_index(typeid(TResource))) > 0;
