@@ -2,7 +2,7 @@
 
 ![Build](https://github.com/bwally0/wengine/actions/workflows/build.yml/badge.svg)
 
-wengine is a modular game engine built around the ECS pattern and organizes functionality into modules, resources, entities, components, and systems.
+wengine is a modular game engine built around the ECS pattern.
 
 ## Manual
 
